@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="regress">
+<head>
+    <meta charset="UTF-8">
+    <title>Regress</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+            crossorigin="anonymous"></script>
+    <style>
+        body {
+          padding-top: 50px;
+        }
+        .main-content {
+          padding: 40px 15px;
+          text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Regress</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/models">Models</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+{% if section == "not_found" %}
+<div class="container">
+    <div class="main-content">
+        <h1> Sorry, we cannot seem to find what you're looking for. </h1>
+    </div>
+</div>
+{% elif section == "home" %}
+<div class="container">
+    <div class="main-content">
+        <div class="row">
+            <h1>Simple Linear Regression</h1>
+            <p class="lead">Regress is a web application to perform linear regression on a simple X,Y input.
+                <br>
+                <a href="/models">
+                    <button type="button" class="btn btn-primary btn-lg">Browse</button>
+                </a>
+            </p>
+        </div>
+        <hr>
+        <h3>Submit a New Regression</h3>
+        <div class="row">
+            <h4>Submit from command line</h4>
+            <code>curl -XPOST -H "Content-Type: application/json" --data @example.json
+                "http://localhost:5000/model</code>
+        </div>
+        <hr>
+        <div class="row">
+            <h4>Upload a CSV</h4>
+            <form action="/upload" method=post enctype=multipart/form-data>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="name" placeholder="name">
+                    <input type="text" class="form-control" name="description" placeholder="description">
+                    <input type="text" class="form-control" name="x_field" placeholder="x_field">
+                    <input type="text" class="form-control" name="y_field" placeholder="y_field">
+                </div>
+                <label class="btn btn-primary btn-block btn-file">
+                    Browse <input type="file" name="file" style="display: none;">
+                </label>
+                <button type=Submit value=Upload class="btn btn-primary btn-block">Upload</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% elif section == "models" %}
+<div class="container">
+    <div class="main-content">
+        {% if model %}
+        <h1>{{ model.name }}</h1>
+        <p class="lead">{{ model.description }}</p>
+        <div class="chart">
+            <figure>
+                <embed type="image/svg+xml" src="/1/models/{{ model.name }}/chart"/>
+            </figure>
+        </div>
+        <a href="/download/{{ model.name }}"><button class="btn btn-primary btn-block">Download CSV</button></a>
+        <hr>
+        <table class="table table-hover">
+            <tr>
+                <td>
+                    <b>{{ model.x_title }}</b>
+                </td>
+                <td>
+                    <b>{{ model.y_title }}</b>
+                </td>
+                <td>
+                    <b>Prediction</b>
+                </td>
+            </tr>
+            {% for entry in model.data() %}
+            <tr>
+                <td>{{ entry[0] }}</td>
+                <td>{{ entry[1] }}</td>
+                <td>{{ entry[2] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        {% for model in models %}
+        <a href="/models/{{ model.name }}"><h3>{{ model.name }}</h3></a>
+        {{ model.description }}
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+</body>
+</html>

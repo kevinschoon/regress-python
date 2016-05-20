@@ -3,6 +3,7 @@ from flask import g
 from sqlalchemy.sql import select
 from sqlalchemy import Table, Column, Integer, Float, ForeignKey, String, MetaData, create_engine
 
+from regress import RegressException
 from regress.model import Model
 
 metadata = MetaData()
@@ -13,6 +14,7 @@ models = Table(
     Column("name", String),
     Column("x_title", String),
     Column("y_title", String),
+    Column("description", String)
 )
 
 data_points = Table(
@@ -44,25 +46,42 @@ def create_model(model):
         models.insert(),
         name=model.name,
         x_title=model.x_title,
-        y_title=model.y_title).inserted_primary_key[0]
+        y_title=model.y_title,
+        description=model.description,
+    ).inserted_primary_key[0]
     db.execute(data_points.insert(), [
         {
             "model_id": primary_key,
             "x_val": x[0],
             "y_val": x[1],
-            "p_val": x[2]} for x in model.to_dict()["data"]
+            "p_val": x[2],
+        } for x in model.to_dict()["data"]
         ])
 
 
-def read_model(name):
+def read(statement):
     db = get_database()
-    stm = select([models, data_points]).where(models.c.id == data_points.c.model_id)
-    if name is not None:
-        stm = stm.where(models.c.name == name)
-    model = None
-    for row in db.execute(stm):
-        if model is None:
-            model = Model(row[1], row[2], row[3])
-        model.add(row[6], row[7], row[8])
-    return model
+    results = []
+    for row in db.execute(statement):
+        previous = [x for x in results if x.name == row[1]]
+        if previous:
+            previous[0].add(row[7], row[8], row[9])
+        else:
+            results.append(Model(row[1], row[2], row[3], row[4]))
+    return results
+
+
+def read_model(name):
+    stm = select([models, data_points]).where(
+        models.c.id == data_points.c.model_id).where(
+        models.c.name == name)
+    result = read(stm)
+    if len(result) != 1:
+        raise RegressException
+    return result[0]
+
+
+def read_all_models():
+    return read(select([models, data_points]).where(models.c.id == data_points.c.model_id))
+
 
