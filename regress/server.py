@@ -1,17 +1,31 @@
 import csv
 import io
+import copy
 import pygal
 from pygal.style import CleanStyle
 
 from flask import Flask, render_template, Response, request, redirect
 
-from regress import RegressException
+from regress import RegressException, REGRESS_VERSION
 from regress.database import create_model, read_model, read_all_models
 from regress.model import Model
 
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+default_context = {
+    "section": "",
+    "model": None,
+    "models": [],
+    "version": REGRESS_VERSION,
+}
+
+
+def ctx(**kwargs):
+    context = copy.copy(default_context)
+    context.update(kwargs)
+    return context
 
 
 def model_to_svg(model):
@@ -32,7 +46,7 @@ def model_to_csv(model):
 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("index.html", section="home", model=None, models=None)
+    return render_template("index.html", **ctx(section="home"))
 
 
 @app.route("/upload", methods=["POST"])
@@ -59,13 +73,13 @@ def download_csv(name):
     try:
         model = read_model(name)
     except RegressException:
-        return render_template("index.html", section="not_found"), 404
+        return render_template("index.html", **ctx(section="not_found")), 404
     return model_to_csv(model)
 
 
 @app.route("/models", methods=["GET"])
 def render_models():
-    return render_template("index.html", section="models", model=None, models=read_all_models())
+    return render_template("index.html", **ctx(section="models", models=read_all_models()))
 
 
 @app.route('/models/<name>', methods=["GET"])
@@ -74,8 +88,8 @@ def render_model(name):
     try:
         model = read_model(name)
     except RegressException:
-        render_template("index.html", section="not_found")
-    return render_template("index.html", section="models", model=model)
+        render_template("index.html", **ctx(section="not_found"))
+    return render_template("index.html", **ctx(section="models", model=model))
 
 
 @app.route('/1/models/<name>/chart', methods=["GET"])
