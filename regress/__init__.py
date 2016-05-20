@@ -1,0 +1,3 @@
+
+class RegressException(Exception):
+    pass
