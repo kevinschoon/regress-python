@@ -14,13 +14,28 @@
             integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
             crossorigin="anonymous"></script>
     <style>
+    html {
+  position: relative;
+  min-height: 100%;
+}
+
         body {
           padding-top: 50px;
+          margin-bottom: 60px;
         }
         .main-content {
           padding: 40px 15px;
           text-align: center;
         }
+        .footer {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          /* Set the fixed height of the footer here */
+          height: 60px;
+          background-color: #f5f5f5;
+        }
+
 
     </style>
 </head>
@@ -129,5 +144,11 @@
     </div>
 </div>
 {% endif %}
+<footer class="footer">
+    <div class="container">
+        <br>
+        <p class="text-muted">Regress Version {{ version }}</p>
+    </div>
+</footer>
 </body>
 </html>
