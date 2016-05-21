@@ -5,6 +5,7 @@ COPY requirements.txt setup.py /app/
 
 RUN pip install -r /app/requirements.txt && \
     cd /app && \
-    python setup.py develop
+    python setup.py develop && \
+    regress --init
 
 ENTRYPOINT [ "gunicorn" ]
