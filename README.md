@@ -1,4 +1,15 @@
-### regress-python
+## regress-python
+
+### Running Locally
+
+    $ docker build -t regress-python .
+    $ docker run -d -p 8000:8000 regress-python
+    # Load some sample data
+    $ cd sample_data
+    $ curl -XPOST -H "Content-Type: multipart/form-data" -F "name=Housing Data" -F "description=Housing Prices vs Lot Size" -F "x_field=price" -F "y_field=lotsize" -F "file=@Housing.csv" "http://localhost:8000/upload"
+
+
+### requirements
 
 * A web app run from AWS
 * User can access web-based service via a web browser, containing a simple front end
