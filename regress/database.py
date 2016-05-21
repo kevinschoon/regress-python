@@ -1,3 +1,4 @@
+import os
 from flask import g
 
 from sqlalchemy.sql import select
@@ -11,10 +12,10 @@ metadata = MetaData()
 models = Table(
     "model", metadata,
     Column("id", Integer, primary_key=True),
-    Column("name", String),
-    Column("x_title", String),
-    Column("y_title", String),
-    Column("description", String)
+    Column("name", String(length=100)),
+    Column("x_title", String(length=100)),
+    Column("y_title", String(length=100)),
+    Column("description", String(length=1000))
 )
 
 data_points = Table(
@@ -26,7 +27,10 @@ data_points = Table(
     Column("p_val", Float),
 )
 
-engine = create_engine("sqlite:////tmp/test.db", echo=True)
+sql_url = os.environ.get("MYSQL_URL")
+if sql_url is None:
+    sql_url = "sqlite:////tmp/test.db"
+engine = create_engine(sql_url, echo=True)
 
 
 def init_database():
