@@ -4,3 +4,4 @@ Flask-SQLAlchemy==2.1
 pygal==2.2.2
 numpy==1.11.0
 scipy==0.17.1
+PyMySQL==0.7.3
