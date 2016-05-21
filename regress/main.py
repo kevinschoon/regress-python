@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import sys
+import argparse
 import logging
-import multiprocessing
-
-from gunicorn.app.base import BaseApplication
 
 from regress.server import app
 from regress.database import init_database
@@ -14,12 +13,15 @@ app.debug = True
 
 
 def main():
+    parser = argparse.ArgumentParser("regress")
+    parser.add_argument("--init", action="store_true", help="initialize the database")
+    args = parser.parse_args()
+    if args.init:
+        init_database()
+        sys.exit(0)
     init_database()
-    if app.debug:
-        logger.setLevel(logging.INFO)
-        app.run(host='0.0.0.0')
-    else:
-        BaseApplication(app, {'timeout': 120, 'bind': ':5000', 'workers': (multiprocessing.cpu_count() * 2) + 1}).run()
+    logger.setLevel(logging.DEBUG)
+    app.run(host='0.0.0.0')
 
 if __name__ == '__main__':
     main()
