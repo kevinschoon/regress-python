@@ -1,10 +1,6 @@
-import io
-import csv
-import pygal
 import numpy as np
 
 from scipy import stats
-from pygal.style import CleanStyle
 
 
 class Model:
