@@ -80,9 +80,13 @@
         <hr>
         <h3>Submit a New Regression</h3>
         <div class="row">
-            <h4>Submit from command line</h4>
+            <h4>Command line</h4>
             <code>
-                $ curl -XPOST -H "Content-Type: multipart/form-data" -F "name=Housing Data" -F "description=Housing Prices vs Lot Size" -F "x_field=price" -F "y_field=lotsize" -F "file=@Housing.csv" "http://localhost:5000/upload"
+                $ curl -XPOST -H "Content-Type: multipart/form-data" -F "name=Housing Data" -F "description=Housing Prices vs Lot Size" -F "x_field=price" -F "y_field=lotsize" -F "file=@Housing.csv" http://regress.vektor.nyc/upload
+            </code>
+            <hr>
+            <code>
+                $ curl -XGET "http://regress.vektor.nyc/download/Housing%20Data" > result.csv
             </code>
         </div>
         <hr>
