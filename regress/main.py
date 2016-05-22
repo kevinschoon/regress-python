@@ -5,7 +5,7 @@ import argparse
 import logging
 
 from regress.server import app
-from regress.database import init_database
+from regress.database import db
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s.%(module)s - %(message)s')
 logger = logging.getLogger()
@@ -17,9 +17,9 @@ def main():
     parser.add_argument("--init", action="store_true", help="initialize the database")
     args = parser.parse_args()
     if args.init:
-        init_database()
+        db.init_db()
         sys.exit(0)
-    init_database()
+    db.init_db()
     logger.setLevel(logging.DEBUG)
     app.run(host='0.0.0.0')
 

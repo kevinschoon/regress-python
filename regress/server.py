@@ -7,7 +7,7 @@ from pygal.style import CleanStyle
 from flask import Flask, render_template, Response, request, redirect
 
 from regress import RegressException, REGRESS_VERSION
-from regress.database import create_model, read_model, read_all_models
+from regress.database import db
 from regress.model import Model
 
 
@@ -64,14 +64,14 @@ def upload_csv():
             y_val = float(row.get(model.y_title))
             model.add(x_val=x_val, y_val=y_val)
         model.regress()
-        create_model(model)
+        db.create(model)
     return redirect("/models/{}".format(request.form["name"]))
 
 
 @app.route("/download/<name>", methods=["GET"])
 def download_csv(name):
     try:
-        model = read_model(name)
+        model = db.model(name)
     except RegressException:
         return render_template("index.html", **ctx(section="not_found")), 404
     return model_to_csv(model)
@@ -79,14 +79,14 @@ def download_csv(name):
 
 @app.route("/models", methods=["GET"])
 def render_models():
-    return render_template("index.html", **ctx(section="models", models=read_all_models()))
+    return render_template("index.html", **ctx(section="models", models=db.models()))
 
 
 @app.route('/models/<name>', methods=["GET"])
 def render_model(name):
     model = None
     try:
-        model = read_model(name)
+        model = db.model(name)
     except RegressException:
         render_template("index.html", **ctx(section="not_found"))
     return render_template("index.html", **ctx(section="models", model=model))
@@ -95,7 +95,7 @@ def render_model(name):
 @app.route('/1/models/<name>/chart', methods=["GET"])
 def chart_svg(name):
     try:
-        return Response(model_to_svg(read_model(name)), mimetype="image/svg+xml")
+        return Response(model_to_svg(db.model(name)), mimetype="image/svg+xml")
     except RegressException:
         return "", 404
 
