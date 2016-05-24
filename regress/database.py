@@ -32,7 +32,7 @@ class Database:
         url = os.environ.get("MYSQL_URL")
         if url is None:
             url = "sqlite:////tmp/regress.db"
-        self.engine = create_engine(url, echo=True)
+        self.engine = create_engine(url, echo=True, pool_recycle=3600)
 
     def init_db(self):
         metadata.create_all(self.engine)
