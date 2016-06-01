@@ -21,8 +21,8 @@ data_points = Table(
     "data", metadata,
     Column("id", Integer, primary_key=True),
     Column("model_id", None, ForeignKey("model.id")),
-    Column("x_val", Integer),
-    Column("y_val", Integer),
+    Column("x_val", Float),
+    Column("y_val", Float),
     Column("p_val", Float),
 )
 

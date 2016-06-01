@@ -27,8 +27,8 @@ class Model:
 
     def data(self):
         return list(zip(
-            [int(x) for x in self.x_val],
-            [int(y) for y in self.y_val],
+            [float(x) for x in self.x_val],
+            [float(y) for y in self.y_val],
             [float(p) for p in self.p_val],
         ))
 
