@@ -1,4 +1,4 @@
-## regress-python [regress.vektor.nyc](http://regress.vektor.nyc)
+## regress-python
 
 Regress performs simple linear regression against an uploaded data set.
 
